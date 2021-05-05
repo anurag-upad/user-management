@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <button class="btn btn-primary" type="button"
+      [routerLink]="['/auth']">Login Page
+    </button>
+  </div>
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <form #postForm="ngForm" (ngSubmit)="onCreateUser()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" class="form-control"
+            id="name"
+            required pattern="^[a-zA-Z]+$" minlength="3"
+            #name="ngModel" [(ngModel)]="user.name"
+            name="name"/>
+            <div *ngIf="!name?.valid && (name?.dirty || name?.touched)" class="error">
+              <span class="help-block" *ngIf="name.errors.required">
+                Please enter a name
+              </span>
+              <span class="help-block" *ngIf="name.errors.minlength">
+                Name Minimum Length is {{name.errors.minlength?.requiredLength}}
+              </span>
+            </div>
+        </div>
+        <div class="form-group">
+          <label for="department">Department</label>
+          <textarea class="form-control" id="department"
+            required #department="ngModel"
+            [(ngModel)]="user.department"
+            name="department"
+          ></textarea>
+          <span class="help-block" 
+            *ngIf="(department.touched || department.dirty) && !department.valid">
+            Please enter a department</span>
+        </div>
+        <div class="form-group">
+          <label for="email" appBgStyle>Email</label>
+          <input type="email" class="form-control"
+            id="email" appBgStyle
+            required email appEmailvalidator
+            #email="ngModel" [(ngModel)]="user.email"
+            name="email"/>
+            <div *ngIf="!email.valid && (email.dirty || email.touched)" class="error">
+              <span class="help-block" class="help-block" *ngIf="email.errors.emailvalidator">  
+                Please enter a valid email !!! - appEmailvalidator
+              </span>
+              <span class="help-block" *ngIf="!email.hasError('emailvalidator')">
+                Please enter an email
+              </span>
+            </div>
+        </div>
+        <button class="btn btn-primary"
+          type="submit"
+          [disabled]="!postForm.valid">Save User
+        </button>
+      </form>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <button class="btn btn-primary" (click)="onFetchUsers()">
+        Fetch Users
+      </button>
+        <hr>
+        <input type="text" class="form-control" 
+          placeholder="Please enter the name of the user you want to filter..."
+          [(ngModel)]="filteredName">
+        <hr>
+        <ul class="list-group" *ngIf="users.length >= 1">
+          <li class="list-group-item" style="cursor:pointer"
+            *ngFor="let user of users | filterByName: filteredName : 'name' | 
+                                        sortByDeptt : 'department' ">
+            {{user.name}} |  {{user.eid}} |  {{user.department}}  | {{user.email}}
+            <button type="button" class="btn btn-danger pull-right"
+                (click)="onDeleteUser(user.eid)">X</button>
+          </li>
+        </ul>
+     <hr>
+      <button class="btn btn-danger"
+        [disabled]="users.length < 1"
+        (click)="onClearPosts()">
+        Clear Users
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6 col-md-offset-3">
+      <p *ngIf="users.length < 1">No users available!</p>
+    </div>
+  </div>
